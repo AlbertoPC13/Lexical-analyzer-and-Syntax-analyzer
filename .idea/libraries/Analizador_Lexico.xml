@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="Analizador_Lexico">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/dist/Analizador_Lexico.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
