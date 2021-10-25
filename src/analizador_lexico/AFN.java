@@ -18,8 +18,9 @@ public class AFN {
     HashSet<Estado> EdosAcept = new HashSet<>();
     //Se asigna un HashSet para almacenar el Alfabeto perteneciente a un AFN
     HashSet<Character> Alfabeto = new HashSet<>();
-    //STANDING BY//
+    //Indica los AFN que seran agregados al analizador lexico
     boolean SeAgregoAFNUnionLexico;
+    //Identificador del AFN
     public int IdAFN;
 
     //Constructor de un AFN
@@ -170,8 +171,12 @@ public class AFN {
         Estado ini = new Estado();
         Estado fin = new Estado();
 
+        //Se crea una transicion epsilon del nuevo estado inicial al estado inicial del AFN invocante
         ini.getTrans().add(new Transicion(SimbolosEspeciales.EPSILON, this.EdoIni));
 
+        //Por cada estado de aceptacion en el AFN invocante, se le agrega una transicion epsilon al nuevo estado de aceptacion
+        //se agrega una transicion epsilon al estado inicial del AFN invocante
+        //ademas se pone en false el atributo de estado de aceptacion
         EdosAcept.forEach((e)
                 -> {
             e.getTrans().add(new Transicion(SimbolosEspeciales.EPSILON, fin));
@@ -179,6 +184,7 @@ public class AFN {
             e.setEdoAcept(false);
         });
 
+        //Actualizacion de automata tras cerradura positiva
         this.EdoIni = ini;
         fin.setEdoAcept(true);
         this.EdosAcept.clear();
@@ -194,9 +200,14 @@ public class AFN {
         Estado ini = new Estado();
         Estado fin = new Estado();
 
+        //Se crea una transicion epsilon del nuevo estado inicial al estado inicial del AFN invocante
+        //Y se agrega una transicion epsilon del nuevo estado inicial al nuevo estado final
         ini.getTrans().add(new Transicion(SimbolosEspeciales.EPSILON, EdoIni));
         ini.getTrans().add(new Transicion(SimbolosEspeciales.EPSILON, fin));
 
+        //Por cada estado de aceptacion en el AFN invocante, se le agrega una transicion epsilon al nuevo estado de aceptacion
+        //se agrega una transicion epsilon al estado inicial del AFN invocante
+        //ademas se pone en false el atributo de estado de aceptacion
         EdosAcept.forEach((e)
                 -> {
             e.getTrans().add(new Transicion(SimbolosEspeciales.EPSILON, fin));
@@ -204,6 +215,7 @@ public class AFN {
             e.setEdoAcept(false);
         });
 
+        //Actualizacion de automata tras cerradura de Kleen
         EdoIni = ini;
         fin.setEdoAcept(true);
         EdosAcept.clear();
@@ -219,15 +231,20 @@ public class AFN {
         Estado ini = new Estado();
         Estado fin = new Estado();
 
+        //Se crea una transicion epsilon del nuevo estado inicial al estado inicial del AFN invocante
+        //Y se agrega una transicion epsilon del nuevo estado inicial al nuevo estado final
         ini.getTrans().add(new Transicion(SimbolosEspeciales.EPSILON, EdoIni));
         ini.getTrans().add(new Transicion(SimbolosEspeciales.EPSILON, fin));
 
+        //Por cada estado de aceptacion en el AFN invocante se le agrega una transicion epsilon al nuevo estado de aceptacion
+        //ademas se pone en false el atributo de estado de aceptacion
         EdosAcept.forEach((e)
                 -> {
             e.getTrans().add(new Transicion(SimbolosEspeciales.EPSILON, fin));
             e.setEdoAcept(false);
         });
 
+        //Actualizacion de automata tras operacion opcional        
         EdoIni = ini;
         fin.setEdoAcept(true);
         EdosAcept.clear();
@@ -239,24 +256,35 @@ public class AFN {
     }
 
     public HashSet<Estado> CerrEpsilon(Estado e) {
+        //Se crea el conjunto de estados que indica los estados alcanzables por epsilon
         HashSet<Estado> R = new HashSet<>();
+        //Se crea una pila para los estados por analizar
         Stack<Estado> Stack = new Stack<>();
         Estado aux;
 
+        //Se limpian el hashset y la pila para el inicio del analisis 
         R.clear();
         Stack.clear();
 
+        //Se agrega el estado recibido a la pila
         Stack.push(e);
+        //Se realiza el ciclo while hasta que no queden elementos por analizar en la pila
         while (!Stack.isEmpty()) {
+            //Se saca el estado que esta en el tope de la pila
             aux = Stack.pop();
+            //Se agrega el estado a el hashset de estados alcanzables por epsilon
             R.add(aux);
 
+            //Se compureban todas las transiciones del estado auxiliar que se analiza
             aux.getTrans().forEach((t)
                     -> {
                 Estado Edo;
+                //Se comprueba si la transicion es con el simbolo epsilon
                 if (t.GetEdoTrans(SimbolosEspeciales.EPSILON) != null) {
                     Edo = t.GetEdoTrans(SimbolosEspeciales.EPSILON);
+                    //Se comprueba si el estado no se ha agregado a la lista de estados alcanzables por epsilon
                     if (!R.contains(Edo)) {
+                        //Si el estado no se encontraba en la lista, se agrega a la pila
                         Stack.push(Edo);
                     }
                 }
@@ -267,25 +295,36 @@ public class AFN {
     }
 
     public HashSet<Estado> CerrEpsilon(HashSet<Estado> Edos) {
+        //Se crea el conjunto de estados que indica los estados alcanzables por epsilon
         HashSet<Estado> R = new HashSet<>();
+        //Se crea una pila para los estados por analizar
         Stack<Estado> Stack = new Stack<>();
         Estado aux, Edo;
 
+        //Se limpian el hashset y la pila para el inicio del analisis 
         R.clear();
         Stack.clear();
 
+        //Se agrega cada estado del hashset recibido a la pila
         for (Estado e : Edos) {
             Stack.push(e);
         }
 
+        //Se realiza el ciclo while hasta que no queden elementos por analizar en la pila
         while (!Stack.empty()) {
+            //Se saca el estado que esta en el tope de la pila
             aux = Stack.pop();
+            //Se agrega el estado a el hashset de estados alcanzables por epsilon
             R.add(aux);
 
+            //Se compureban todas las transiciones del estado auxiliar que se analiza
             for (Transicion t : aux.getTrans()) {
+                //Se comprueba si la transicion es con el simbolo epsilon
                 if (t.GetEdoTrans(SimbolosEspeciales.EPSILON) != null) {
                     Edo = t.GetEdoTrans(SimbolosEspeciales.EPSILON);
+                    //Se comprueba si el estado no se ha agregado a la lista de estados alcanzables por epsilon
                     if (!R.contains(Edo)) {
+                        //Si el estado no se encontraba en la lista, se agrega a la pila
                         Stack.push(Edo);
                     }
                 }
