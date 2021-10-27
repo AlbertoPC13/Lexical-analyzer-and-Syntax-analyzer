@@ -49,6 +49,7 @@ public class GUI extends javax.swing.JFrame {
         jMenuItem11 = new javax.swing.JMenuItem();
         jMenu1 = new javax.swing.JMenu();
         jMenuItem13 = new javax.swing.JMenuItem();
+        jMenuItem12 = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Analizador Léxico");
@@ -170,6 +171,14 @@ public class GUI extends javax.swing.JFrame {
             }
         });
         jMenu1.add(jMenuItem13);
+
+        jMenuItem12.setText("Descenso Rec. Gramática de Gramáticas ");
+        jMenuItem12.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem12ActionPerformed(evt);
+            }
+        });
+        jMenu1.add(jMenuItem12);
 
         jMenuBar1.add(jMenu1);
 
@@ -313,6 +322,16 @@ public class GUI extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_jMenuItem13ActionPerformed
 
+    private void jMenuItem12ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem12ActionPerformed
+       if (!AFD.ConjAFDs.isEmpty()) {
+            DescRecG_G x = new DescRecG_G();
+            Escritorio.add(x);
+            x.show();
+        } else {
+            JOptionPane.showMessageDialog(null, "No existen AFDs para realizar la operación");
+        }
+    }//GEN-LAST:event_jMenuItem12ActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -356,6 +375,7 @@ public class GUI extends javax.swing.JFrame {
     private javax.swing.JMenuItem jMenuItem1;
     private javax.swing.JMenuItem jMenuItem10;
     private javax.swing.JMenuItem jMenuItem11;
+    private javax.swing.JMenuItem jMenuItem12;
     private javax.swing.JMenuItem jMenuItem13;
     private javax.swing.JMenuItem jMenuItem2;
     private javax.swing.JMenuItem jMenuItem3;
