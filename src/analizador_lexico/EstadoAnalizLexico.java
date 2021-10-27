@@ -2,7 +2,7 @@ package analizador_lexico;
 
 import java.util.Stack;
 
-class EstadoAnalizLexico {
+public class EstadoAnalizLexico {
     public int token, EdoActual, EdoTransicion;
     
     public String Lexema;
