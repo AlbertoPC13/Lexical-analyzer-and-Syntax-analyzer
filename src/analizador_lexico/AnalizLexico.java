@@ -3,6 +3,7 @@ package analizador_lexico;
 import java.util.Stack;
 
 public class AnalizLexico {
+
     int token, EdoActual, EdoTransicion;
     String CadenaSigma;
     public String Lexema;
@@ -11,9 +12,8 @@ public class AnalizLexico {
     char CaracterActual;
     Stack<Integer> Pila = new Stack<>();
     AFD AutomataFD;
-    
-    public AnalizLexico()
-    {
+
+    public AnalizLexico() {
         CadenaSigma = "";
         PasoPorEdoAcept = false;
         IniLexema = -1;
@@ -23,9 +23,8 @@ public class AnalizLexico {
         Pila.clear();
         AutomataFD = null;
     }
-    
-    public AnalizLexico(String sigma, String FileAFD, int IdAFD)
-    {
+
+    public AnalizLexico(String sigma, String FileAFD, int IdAFD) {
         AutomataFD = new AFD();
         CadenaSigma = sigma;
         PasoPorEdoAcept = false;
@@ -36,9 +35,8 @@ public class AnalizLexico {
         Pila.clear();
         AutomataFD.ImportarAFD(FileAFD, IdAFD);
     }
-    
-    public AnalizLexico(String sigma, String FileAFD)
-    {
+
+    public AnalizLexico(String sigma, String FileAFD) {
         AutomataFD = new AFD();
         CadenaSigma = sigma;
         PasoPorEdoAcept = false;
@@ -49,9 +47,8 @@ public class AnalizLexico {
         Pila.clear();
         AutomataFD.ImportarAFD(FileAFD, -1);
     }
-    
-    public AnalizLexico(String FileAFD,int IdAFD)
-    {
+
+    public AnalizLexico(String FileAFD, int IdAFD) {
         AutomataFD = new AFD();
         CadenaSigma = "";
         PasoPorEdoAcept = false;
@@ -62,9 +59,8 @@ public class AnalizLexico {
         Pila.clear();
         AutomataFD.ImportarAFD(FileAFD, IdAFD);
     }
-    
-    public AnalizLexico(String sigma, AFD AutFD)
-    {
+
+    public AnalizLexico(String sigma, AFD AutFD) {
         CadenaSigma = sigma;
         PasoPorEdoAcept = false;
         IniLexema = 0;
@@ -74,9 +70,8 @@ public class AnalizLexico {
         Pila.clear();
         AutomataFD = AutFD;
     }
-    
-    public void SetSigma(String sigma)
-    {
+
+    public void SetSigma(String sigma) {
         CadenaSigma = sigma;
         PasoPorEdoAcept = false;
         IniLexema = 0;
@@ -85,62 +80,60 @@ public class AnalizLexico {
         token = -1;
         Pila.clear();
     }
-    
-    public int yylex()
-    {
-        Pila.push(IndiceCaracterActual);
-        if(IndiceCaracterActual >= CadenaSigma.length())
-        {
-            Lexema = "";
-            return SimbolosEspeciales.FIN;
-        }
-        
-        IniLexema = IndiceCaracterActual;
-        EdoActual = 0;
-        PasoPorEdoAcept = false;
-        FinLexema = -1;
-        token = -1;
-        
-        while(IndiceCaracterActual < CadenaSigma.length())
-        {
-            CaracterActual = CadenaSigma.charAt(IndiceCaracterActual);
-            EdoTransicion = AutomataFD.TablaAFD[EdoActual][CaracterActual];
-            if(EdoTransicion != -1)
-            {
-                if(AutomataFD.TablaAFD[EdoTransicion][256] != -1)
-                {
-                    PasoPorEdoAcept = true;
-                    token = AutomataFD.TablaAFD[EdoTransicion][256];
-                    FinLexema = IndiceCaracterActual;
-                }
-                IndiceCaracterActual++;
-                EdoActual = EdoTransicion;
-                continue;
+
+    public int yylex() {
+        while (true) {
+            Pila.push(IndiceCaracterActual);
+            if (IndiceCaracterActual >= CadenaSigma.length()) {
+                Lexema = "";
+                return SimbolosEspeciales.FIN;
             }
-            break;
+
+            IniLexema = IndiceCaracterActual;
+            EdoActual = 0;
+            PasoPorEdoAcept = false;
+            FinLexema = -1;
+            token = -1;
+
+            while (IndiceCaracterActual < CadenaSigma.length()) {
+                CaracterActual = CadenaSigma.charAt(IndiceCaracterActual);
+                EdoTransicion = AutomataFD.TablaAFD[EdoActual][CaracterActual];
+                if (EdoTransicion != -1) {
+                    if (AutomataFD.TablaAFD[EdoTransicion][256] != -1) {
+                        PasoPorEdoAcept = true;
+                        token = AutomataFD.TablaAFD[EdoTransicion][256];
+                        FinLexema = IndiceCaracterActual;
+                    }
+                    IndiceCaracterActual++;
+                    EdoActual = EdoTransicion;
+                    continue;
+                }
+                break;
+            }
+            if (!PasoPorEdoAcept) {
+                IndiceCaracterActual = IniLexema + 1;
+                Lexema = CadenaSigma.substring(IniLexema, IniLexema + 1);
+                token = SimbolosEspeciales.ERROR;
+                return token;
+            }
+            Lexema = CadenaSigma.substring(IniLexema, FinLexema + 1);
+            IndiceCaracterActual = FinLexema + 1;
+            if (token == SimbolosEspeciales.OMITIR)
+                continue;
+            else
+                return token;
         }
-        if(!PasoPorEdoAcept)
-        {
-            IndiceCaracterActual = IniLexema + 1;
-            Lexema = CadenaSigma.substring(IniLexema,IniLexema+1);
-            token = 404;
-            return token;
-        }
-        Lexema = CadenaSigma.substring(IniLexema, FinLexema + 1);
-        IndiceCaracterActual = FinLexema + 1;
-        return token;
     }
-    
-    public boolean UndoToken()
-    {
-        if(Pila.empty())
+
+    public boolean UndoToken() {
+        if (Pila.empty()) {
             return false;
+        }
         IndiceCaracterActual = Pila.pop();
         return true;
     }
-    
-    public EstadoAnalizLexico GetEdoAnalizLexico()
-    {
+
+    public EstadoAnalizLexico GetEdoAnalizLexico() {
         EstadoAnalizLexico EdoActualAnaliz = new EstadoAnalizLexico();
         EdoActualAnaliz.CaracterActual = CaracterActual;
         EdoActualAnaliz.EdoTransicion = EdoTransicion;
@@ -151,12 +144,11 @@ public class AnalizLexico {
         EdoActualAnaliz.PasoPorEdoAcept = PasoPorEdoAcept;
         EdoActualAnaliz.token = token;
         EdoActualAnaliz.Pila = Pila;
-        
+
         return EdoActualAnaliz;
     }
-    
-    public boolean SetEdoAnalizLexico(EstadoAnalizLexico e)
-    {
+
+    public boolean SetEdoAnalizLexico(EstadoAnalizLexico e) {
         CaracterActual = e.CaracterActual;
         EdoActual = e.EdoActual;
         EdoTransicion = e.EdoTransicion;
@@ -167,7 +159,7 @@ public class AnalizLexico {
         PasoPorEdoAcept = e.PasoPorEdoAcept;
         token = e.token;
         Pila = e.Pila;
-        
+
         return true;
     }
 }
