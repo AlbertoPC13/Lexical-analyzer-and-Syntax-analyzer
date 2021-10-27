@@ -31,8 +31,7 @@ public class ER_AFN {
     public boolean IniConversion()
     {
         int Token;
-        AFN f;
-        f = new AFN();
+        AFN f = new AFN();
         if(E(f))
         {
             Token = L.yylex();
@@ -171,7 +170,7 @@ public class ER_AFN {
                             Token = L.yylex();
                             if(Token == 90) //Corchete derecho
                             {
-                                f = new AFN();
+                                //f = new AFN();
                                 f.CrearAFNBasico(simbolo1, simbolo2);
                                 return true;
                             }
@@ -182,7 +181,7 @@ public class ER_AFN {
                 
             case 110:   //Simbolo
                 simbolo1 = (L.Lexema.charAt(0) == '\\') ? L.Lexema.charAt(1) : L.Lexema.charAt(0);
-                f = new AFN();
+                //f = new AFN();
                 f.CrearAFNBasico(simbolo1);
                 return true;
         }
