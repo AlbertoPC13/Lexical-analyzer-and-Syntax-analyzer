@@ -138,4 +138,36 @@ public class AnalizLexico {
         IndiceCaracterActual = Pila.pop();
         return true;
     }
+    
+    public EstadoAnalizLexico GetEdoAnalizLexico()
+    {
+        EstadoAnalizLexico EdoActualAnaliz = new EstadoAnalizLexico();
+        EdoActualAnaliz.CaracterActual = CaracterActual;
+        EdoActualAnaliz.EdoTransicion = EdoTransicion;
+        EdoActualAnaliz.FinLexema = FinLexema;
+        EdoActualAnaliz.IndiceCaracterActual = IndiceCaracterActual;
+        EdoActualAnaliz.IniLexema = IniLexema;
+        EdoActualAnaliz.Lexema = Lexema;
+        EdoActualAnaliz.PasoPorEdoAcept = PasoPorEdoAcept;
+        EdoActualAnaliz.token = token;
+        EdoActualAnaliz.Pila = Pila;
+        
+        return EdoActualAnaliz;
+    }
+    
+    public boolean SetEdoAnalizLexico(EstadoAnalizLexico e)
+    {
+        CaracterActual = e.CaracterActual;
+        EdoActual = e.EdoActual;
+        EdoTransicion = e.EdoTransicion;
+        FinLexema = e.FinLexema;
+        IndiceCaracterActual = e.IndiceCaracterActual;
+        IniLexema = e.IniLexema;
+        Lexema = e.Lexema;
+        PasoPorEdoAcept = e.PasoPorEdoAcept;
+        token = e.token;
+        Pila = e.Pila;
+        
+        return true;
+    }
 }
