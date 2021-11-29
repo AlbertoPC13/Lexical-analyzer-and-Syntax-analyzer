@@ -1,7 +1,7 @@
 package analizador_lexico;
 
 public class EvaluadorExpr {
-    String Expresion;
+    public String Expresion; 
     public float result;
     public String ExprPost;
     public AnalizLexico L;
