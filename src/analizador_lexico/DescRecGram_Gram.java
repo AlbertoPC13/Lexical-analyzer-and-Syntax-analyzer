@@ -189,21 +189,78 @@ public class DescRecGram_Gram {
                 return R;
             }
             //N es no terminal. Se calcula el first de cada lado derecho de este no terminal
-            for(i = 0; i < NumReglas; i++)
-            {
-                if(ArrReglas[i].ListaLadoDerecho.lista.get(0).Simbolo.equals(N.Simbolo)) // Ejemplo: E -> E + T
+            for (i = 0; i < NumReglas; i++) {
+                if (ArrReglas[i].ListaLadoDerecho.lista.get(0).Simbolo.equals(N.Simbolo)) // Ejemplo: E -> E + T
+                {
                     continue;
-                if(ArrReglas[i].InfSimbolo.Simbolo.equals(N.Simbolo))
+                }
+                if (ArrReglas[i].InfSimbolo.Simbolo.equals(N.Simbolo)) {
                     R.addAll(First(ArrReglas[i].ListaLadoDerecho));
+                }
             }
-            if(R.contains("£"))
-            {
-                if(j == (lista.lista.size() - 1))
+            if (R.contains("£")) {
+                if (j == (lista.lista.size() - 1)) {
                     continue;
+                }
                 R.remove("£");
-            }
-            else
+            } else {
                 break;
+            }
+        }
+        return R;
+    }
+
+    public HashSet<String> Follow(String simbNoTerm) {
+        HashSet<String> R = new HashSet<>();
+        HashSet<String> aux = new HashSet<>();
+        Lista ListaPost = new Lista();
+
+        R.clear();
+
+        int i, j, k;
+
+        if (ArrReglas[0].InfSimbolo.Simbolo.equals(simbNoTerm)) {
+            R.add("$");
+        }
+
+        for (i = 0; i < NumReglas; i++) //Se busca SimbNoTerm en los lados derechos de todas las reglas
+        {
+            //Se recorre la lista del lado derecho buscando el simbolo SimbNoTerm
+            for (j = 0; j < ArrReglas[i].ListaLadoDerecho.lista.size(); j++) {
+
+                if (ArrReglas[i].ListaLadoDerecho.lista.get(j).Simbolo.equals(simbNoTerm)) {
+
+                    ListaPost.lista.clear();
+                    //Obtenemos la lista que corresponden a los simbolos que estan despues de SimbNoTerm
+                    for (k = j + 1; k < ArrReglas[i].ListaLadoDerecho.lista.size(); k++) {
+                        ListaPost.lista.add(ArrReglas[i].ListaLadoDerecho.lista.get(k));
+                    }
+
+                    //Si no hay mas simbolos despues de SimbNoTerm, se calcula el Follow del lado izquierdo de la regla
+                    if (ListaPost.lista.isEmpty()) {
+                        //Si el simbolo del lado izquiero es igual al simbolo del que queremos calcular
+                        //el follow, omitimos la regla
+                        if (!ArrReglas[i].InfSimbolo.Simbolo.equals(simbNoTerm)) {
+                            R.addAll(Follow(ArrReglas[i].InfSimbolo.Simbolo));
+                        }
+                        break;
+                    }
+
+                    //Se calcula el first de la lista 1 que esta despues del elemento j
+                    aux.clear();
+                    aux = First(ListaPost);
+
+                    if (aux.contains("£")) {
+                        aux.remove("£");
+                        R.addAll(aux);
+                        if (!ArrReglas[i].InfSimbolo.Simbolo.equals(simbNoTerm)) {
+                            R.addAll(Follow(ArrReglas[i].InfSimbolo.Simbolo));
+                        }
+                    } else {
+                        R.addAll(aux);
+                    }
+                }
+            }
         }
         return R;
     }
